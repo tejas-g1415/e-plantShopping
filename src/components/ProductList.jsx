@@ -1,6 +1,59 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, selectCartItems } from "../redux/CartSlice.jsx";
+import {
+  addToCart,
+  selectCartItems,
+  selectCartCount,
+} from "../redux/CartSlice.jsx";
+
+export function Navbar({ page, setPage }) {
+  const cartCount = useSelector(selectCartCount);
+
+  return (
+    <header className="site-header">
+      <button
+        className="brand"
+        type="button"
+        onClick={() => setPage("home")}
+        aria-label="Paradise Nursery home"
+      >
+        <span className="brand-icon" aria-hidden="true">❧</span>
+        <span>
+          Paradise <em>Nursery</em>
+        </span>
+      </button>
+
+      <nav className="main-nav" aria-label="Main navigation">
+        <button
+          type="button"
+          className={page === "home" ? "nav-link active" : "nav-link"}
+          onClick={() => setPage("home")}
+        >
+          Home
+        </button>
+
+        <button
+          type="button"
+          className={page === "plants" ? "nav-link active" : "nav-link"}
+          onClick={() => setPage("plants")}
+        >
+          Plants
+        </button>
+
+        <button
+          type="button"
+          className={page === "cart" ? "nav-link active nav-cart" : "nav-link nav-cart"}
+          onClick={() => setPage("cart")}
+          aria-label={`Shopping cart, ${cartCount} items`}
+        >
+          <span aria-hidden="true">🛒</span> Cart
+          <span className="cart-count">{cartCount}</span>
+        </button>
+      </nav>
+    </header>
+  );
+}
 
 const plantCategories = [
   {
@@ -42,12 +95,17 @@ const plantCategories = [
 ];
 
 export const allPlants = plantCategories.flatMap((category) =>
-  category.plants.map((plant) => ({ ...plant, category: category.name }))
+  category.plants.map((plant) => ({
+    ...plant,
+    category: category.name,
+  }))
 );
 
 export default function ProductList() {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
+  const [addedToCart, setAddedToCart] = useState({});
+
   const addedIds = new Set(cartItems.map((item) => item.id));
 
   return (
@@ -55,7 +113,10 @@ export default function ProductList() {
       <div className="section-heading">
         <p className="eyebrow">Find your new favorite</p>
         <h1>Bring home a little green.</h1>
-        <p>Thoughtfully selected plants for every room and every level of experience.</p>
+        <p>
+          Thoughtfully selected plants for every room and every
+          level of experience.
+        </p>
       </div>
 
       {plantCategories.map((category) => (
@@ -65,12 +126,16 @@ export default function ProductList() {
               <h2>{category.name}</h2>
               <p>{category.description}</p>
             </div>
-            <span className="category-count">{category.plants.length} plants</span>
+            <span className="category-count">
+              {category.plants.length} plants
+            </span>
           </div>
 
           <div className="plant-grid">
             {category.plants.map((plant) => {
               const isAdded = addedIds.has(plant.id);
+              const isDisabled = addedToCart[plant.name] || isAdded;
+
               return (
                 <article className="plant-card" key={plant.id}>
                   <div className="plant-image-wrap">
@@ -80,24 +145,48 @@ export default function ProductList() {
                       alt={plant.name}
                       loading="lazy"
                       onError={(event) => {
-                        event.currentTarget.src = "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=800&q=85";
+                        event.currentTarget.src =
+                          "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=800&q=85";
                       }}
                     />
-                    <span className="plant-category-tag">{category.name}</span>
+                    <span className="plant-category-tag">
+                      {category.name}
+                    </span>
                   </div>
+
                   <div className="plant-card-body">
                     <div className="plant-title-row">
                       <h3>{plant.name}</h3>
-                      <span className="plant-price">${plant.price.toFixed(2)}</span>
+                      <span className="plant-price">
+                        ${plant.price.toFixed(2)}
+                      </span>
                     </div>
+
                     <p>{plant.description}</p>
+
                     <button
-                      className={`button ${isAdded ? "button-added" : "button-primary"} add-button`}
+                      className={`button ${
+                        isDisabled ? "button-added" : "button-primary"
+                      } add-button`}
                       type="button"
-                      disabled={isAdded}
-                      onClick={() => dispatch(addToCart({ ...plant, category: category.name }))}
+                      disabled={isDisabled}
+                      onClick={() => {
+                        dispatch(
+                          addToCart({
+                            ...plant,
+                            category: category.name,
+                          })
+                        );
+
+                        setAddedToCart((previous) => ({
+                          ...previous,
+                          [plant.name]: true,
+                        }));
+                      }}
                     >
-                      {isAdded ? "Added to Cart ✓" : "Add to Cart"}
+                      {isDisabled
+                        ? "Added to Cart ✓"
+                        : "Add to Cart"}
                     </button>
                   </div>
                 </article>

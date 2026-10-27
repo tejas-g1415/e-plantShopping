@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import AboutUs from "./components/AboutUs.jsx";
-import ProductList from "./components/ProductList.jsx";
+import ProductList, {
+  Navbar,
+} from "./components/ProductList.jsx";
 import CartItem from "./components/CartItem.jsx";
 import { selectCartCount } from "./redux/CartSlice.jsx";
 import "./App.css";
@@ -26,30 +28,60 @@ function Navbar({ page, setPage }) {
   );
 }
 
+
 function LandingPage({ onGetStarted }) {
   return (
     <main className="landing-page">
-      <section className="hero">
+      <section className="hero background-image">
         <div className="hero-overlay" />
+
         <div className="hero-content">
-          <p className="hero-kicker">GROW A LITTLE HAPPINESS</p>
-          <h1>Make room for<br /><em>something green.</em></h1>
-          <p className="hero-description">
-            Thoughtful plants. Happier spaces. Find the perfect green companion
-            for your home at Paradise Nursery.
+          <p className="hero-kicker">
+            GROW A LITTLE HAPPINESS
           </p>
-          <button className="button button-light hero-button" onClick={onGetStarted}>
+
+          <h1>
+            Welcome to <br />
+            <em>Paradise Nursery</em>
+          </h1>
+
+          <p className="hero-description">
+            Thoughtful plants. Happier spaces. Find the perfect
+            green companion for your home at Paradise Nursery.
+          </p>
+
+          <button
+            className="button button-light hero-button"
+            onClick={onGetStarted}
+          >
             Get Started <span aria-hidden="true">→</span>
           </button>
-          <div className="hero-note"><span>✦</span> Good things grow here</div>
+
+          <div className="hero-note">
+            <span>✦</span> Good things grow here
+          </div>
         </div>
-        <div className="hero-side-note">A MORE NATURAL KIND OF HOME</div>
+
+        <div className="hero-side-note">
+          A MORE NATURAL KIND OF HOME
+        </div>
       </section>
+
       <AboutUs />
+
       <section className="home-cta">
-        <p className="eyebrow">Your next favorite plant is waiting</p>
+        <p className="eyebrow">
+          Your next favorite plant is waiting
+        </p>
+
         <h2>Let’s find your kind of green.</h2>
-        <button className="button button-primary" onClick={onGetStarted}>Explore our plants</button>
+
+        <button
+          className="button button-primary"
+          onClick={onGetStarted}
+        >
+          Explore our plants
+        </button>
       </section>
     </main>
   );
