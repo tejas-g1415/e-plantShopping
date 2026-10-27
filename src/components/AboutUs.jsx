@@ -2,7 +2,7 @@ import React from "react";
 
 export default function AboutUs() {
   return (
-    <section className="about-section" id="about">
+    <section className="about-us-container" id="about">
       <div className="about-mark" aria-hidden="true">✿</div>
       <div className="about-copy">
         <p className="eyebrow">A little more green, every day</p>
